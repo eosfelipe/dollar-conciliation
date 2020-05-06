@@ -3,6 +3,8 @@ const router = express.Router();
 
 const pool = require('../database');
 
+console.log(pool);
+
 router.get('/', (req, res) => {
     
 });
