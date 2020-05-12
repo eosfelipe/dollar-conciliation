@@ -1,0 +1,50 @@
+<div id="message" class="p-3 mb-2 bg-info text-white mt-4">Click para generar los archivos .txt de cada día para enviar
+    a PC</div>
+
+<dic class="row my-4">
+    <div class="col-md-12">
+        {{#if response}}
+        <div class="progress">
+            <div id="pb" class="progress-bar progress-bar-striped" role="progressbar" style="width: 0%"
+                aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        {{/if}}
+    </div>
+</dic>
+
+<div class="row">
+    <div class="col-md-12">
+        <form action="/generar" method="POST">
+            <input id="token" type="hidden" name="_token">
+            <button class="btn btn-primary">
+                Generar
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const token = document.querySelector('#token');
+        token.value = new Date().getTime();
+
+        let message = document.getElementById('message');
+        const pb = document.getElementById('pb');
+        if (pb) {
+            let count = 0;
+            progress = () => {
+                ++count;
+                pb.style.width = count + '%';
+                if (count != 100) {
+                    message.innerHTML = 'Generando archivos...';
+                    setTimeout(progress, 100);
+                }
+                else {
+                    message.innerHTML = '<strong>Archivos generados</strong>';
+                }
+            };
+
+            progress();
+        }
+    });
+</script>

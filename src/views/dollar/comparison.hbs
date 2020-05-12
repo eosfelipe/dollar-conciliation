@@ -1,0 +1,25 @@
+<div class="p-3 mb-2 bg-info text-white mt-4">Diferencias entre archivo Griselda vs Recuperados: </div>
+<table class="table table-hover mt-4">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Recuperados</th>
+            <th>Griselda</th>
+            <th>Diferencia</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each registros}}
+        <tr>
+            <td>{{counter @index}}</td>
+            <td>{{recuperados}}</td>
+            <td>{{griselda}}</td>
+            {{#if (validation diferencia)}}
+            <td class="table-success">{{diferencia}}</td>
+            {{else}}
+            <td class="table-danger">{{diferencia}}</td>
+            {{/if}}
+        </tr>
+        {{/each}}
+    </tbody>
+</table>

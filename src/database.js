@@ -11,10 +11,10 @@ pool.getConnection((err, connection) => {
         if (err.code === 'ECONNREFUSED') { console.log('DATABASE CONNECTION WAS REFUSED') }
     }
 
-    if (connection) {
+    if (connection) 
         connection.release();
         console.log('DB is connected');
-    }
+    
     return;
 });
 

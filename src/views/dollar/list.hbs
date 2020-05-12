@@ -1,19 +1,35 @@
+<div class="p-3 mb-2 bg-info text-white mt-4">Registros recuperados: </div>
 <table class="table table-hover mt-4">
     <thead>
         <tr>
+            <th>#</th>
+            <th>Id</th>
             <th>Centro</th>
             <th>Caja</th>
-            <th>id</th>
+            <th>Ticket</th>
+            <th>Id_FPT</th>
+            <th>Usr</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Dlls</th>
+            <th>Venta</th>
         </tr>
     </thead>
     <tbody>
+        {{#each registros}}
         <tr>
-            {{#each registros}}
-                {{this}}
-            {{/each}}
-            <td>1010</td>
-            <td>2</td>
-            <td>21345</td>
+            <td>{{counter @index}}</td>
+            <td>{{idunico}}</td>
+            <td>{{centro}}</td>
+            <td>{{caja}}</td>
+            <td>{{ticket}}</td>
+            <td>{{id_fpt}}</td>
+            <td>{{usr}}</td>
+            <td>{{format fecha}}</td>
+            <td>{{hora}}</td>
+            <td>{{dlls}}</td>
+            <td>${{venta}}</td>
         </tr>
+        {{/each}}
     </tbody>
 </table>
