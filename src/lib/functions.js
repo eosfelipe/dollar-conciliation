@@ -1,5 +1,7 @@
 const pool = require('../database');
 const fs = require('fs');
+const moment = require('moment');
+
 async function genTxt() {
     let total = 0;
     let content = '';
@@ -28,7 +30,7 @@ async function genTxt() {
             header = `HDR|T6AH4ADX|N23BZQ3O|${count}|${Number(total).toFixed(2)}|0\n`;
             content = header + body;
 
-            fs.writeFile(`./txt/20200511_${dia}.txt`, content, (err) => {
+            fs.writeFile(`./txt/${moment(Date.now()).format('YYYYMMD')}_${dia}.txt`, content, (err) => {
                 if (err) {
                     return console.log(err);
                 }
