@@ -2,7 +2,10 @@ const express = require('express');
 const router = express.Router();
 
 const pool = require('../database');
-const gt = require('../lib/functions'); 
+const file = require('../lib/functions');
+const axios = require('axios');
+const fs = require('fs');
+const moment =require('moment');
 
 // console.log(pool);
 
@@ -24,7 +27,7 @@ router.get('/comparar', async (req, res) => {
 });
 
 router.get('/generar', async (req, res) => {
-    // if(gt()){
+    // if(file()){
     //     console.log('ok');
     // }
     res.render('dollar/generate');
@@ -32,14 +35,46 @@ router.get('/generar', async (req, res) => {
 
 router.post('/generar', async (req, res) => {
     const { _token } = req.body;
-    
-    if( typeof _token === 'string' ){
+
+    if (typeof _token === 'string') {
         let response = true
-        gt();
-        res.render('dollar/generate', {response});
-    }else {
+        file.genTXT();
+        res.render('dollar/generate', { response });
+    } else {
         res.send('algo salió mal :(');
     }
+});
+
+router.get('/canfac', async (req, res) => {
+    res.render('fac/cancel');
+});
+
+router.post('/canfac', async (req, res) => {
+    const END_POINT = 'http://10.32.1.138/restful/index.php/sucursales/sucursal/';
+    const { cc, folio } = req.body;
+    const response = await axios.get(END_POINT + cc);
+    const sucursal = response.data.sucursal;
+    let render = null;
+
+    const content = 
+    { 
+        folio: folio,
+        serie: sucursal.prefijo,
+        rfc_emisor: "PPA831231GI0",
+        fecha_cancelacion: moment(Date.now()).format('YYYY-MM-DD'),
+        hora_cancelacion: moment(Date.now()).format('HH:mm:ss'),
+        motivo_cacelacion: "Factura reemplazada"
+    }
+
+    fs.writeFile(`./can_json/CAN${cc}${sucursal.prefijo}${folio}.json`, JSON.stringify(content), (error) => {
+        if (error) {
+            console.log(error);
+        }
+        console.log('Successfully generated file .CAN');
+    });
+    render = {...content, ok: true};
+    // res.status(200).send('res');
+    res.render('fac/cancel', { render });
 });
 
 module.exports = router;

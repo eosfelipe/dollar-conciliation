@@ -13,7 +13,7 @@ pool.getConnection((err, connection) => {
 
     if (connection) 
         connection.release();
-        console.log('DB is connected');
+        console.info('DB is connected', database.database);
     
     return;
 });

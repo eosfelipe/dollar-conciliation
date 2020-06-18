@@ -1,8 +1,11 @@
 const pool = require('../database');
 const fs = require('fs');
 const moment = require('moment');
+// const axios = require('axios');
 
-async function genTxt() {
+const file = {};
+
+file.genTXT = async function () {
     let total = 0;
     let content = '';
     let count = 0;
@@ -12,11 +15,11 @@ async function genTxt() {
     for (let dia = 1; dia < 32; dia++) {
         let results;
         if (dia < 10) {
-            results = await pool.query("select concat(substr(fecha,7,4),'/',substr(fecha,4,2),'/',substr(fecha,1,2),' ',hora) as fecha_hora, centro,usr,round(dlls,2) as dlls,round(venta,2) as venta, concat(centro,'0',caja,ticket,id_fpt,concat(substr(fecha,7,4),substr(fecha,4,2),substr(fecha,1,2))) as id from dolar where fecha like '0" + dia + "/04/2020';");
+            results = await pool.query("select concat(substr(fecha,7,4),'/',substr(fecha,4,2),'/',substr(fecha,1,2),' ',hora) as fecha_hora, centro,usr,round(dlls,2) as dlls,round(venta,2) as venta, concat(centro,'0',caja,ticket,id_fpt,concat(substr(fecha,7,4),substr(fecha,4,2),substr(fecha,1,2))) as id from dolar where fecha like '0" + dia + "/05/2020';");
 
         }
         else {
-            results = await pool.query("select concat(substr(fecha,7,4),'/',substr(fecha,4,2),'/',substr(fecha,1,2),' ',hora) as fecha_hora, centro,usr,round(dlls,2) as dlls,round(venta,2) as venta, concat(centro,'0',caja,ticket,id_fpt,concat(substr(fecha,7,4),substr(fecha,4,2),substr(fecha,1,2))) as id from dolar where fecha like '" + dia + "/04/2020';");
+            results = await pool.query("select concat(substr(fecha,7,4),'/',substr(fecha,4,2),'/',substr(fecha,1,2),' ',hora) as fecha_hora, centro,usr,round(dlls,2) as dlls,round(venta,2) as venta, concat(centro,'0',caja,ticket,id_fpt,concat(substr(fecha,7,4),substr(fecha,4,2),substr(fecha,1,2))) as id from dolar where fecha like '" + dia + "/05/2020';");
         }
 
         if (results.length !== 0) {
@@ -46,4 +49,15 @@ async function genTxt() {
     return true;
 }
 
-module.exports = genTxt;
+// file.can = async function (cc) {
+//     const url = `http://10.32.1.138/restful/index.php/sucursales/sucursal/${cc}`;
+    
+//     try {
+//         const response = await axios.get(url);
+//         console.log(response.data);
+//     } catch (error) {
+//         console.error(error);
+//     }
+// }
+
+module.exports = file;
