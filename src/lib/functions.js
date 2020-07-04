@@ -1,6 +1,8 @@
 const pool = require('../database');
 const fs = require('fs');
 const moment = require('moment');
+const { clearScreenDown } = require('readline');
+const { CLIENT_RENEG_LIMIT } = require('tls');
 // const axios = require('axios');
 
 const file = {};
@@ -14,12 +16,13 @@ file.genTXT = async function () {
 
     for (let dia = 1; dia < 32; dia++) {
         let results;
+        let mes = new Date().getMonth();
         if (dia < 10) {
-            results = await pool.query("select concat(substr(fecha,7,4),'/',substr(fecha,4,2),'/',substr(fecha,1,2),' ',hora) as fecha_hora, centro,usr,round(dlls,2) as dlls,round(venta,2) as venta, concat(centro,'0',caja,ticket,id_fpt,concat(substr(fecha,7,4),substr(fecha,4,2),substr(fecha,1,2))) as id from dolar where fecha like '0" + dia + "/05/2020';");
+            results = await pool.query("select concat(substr(fecha,7,4),'/',substr(fecha,4,2),'/',substr(fecha,1,2),' ',hora) as fecha_hora, centro,usr,round(dlls,2) as dlls,round(venta,2) as venta, concat(centro,'0',caja,ticket,id_fpt,concat(substr(fecha,7,4),substr(fecha,4,2),substr(fecha,1,2))) as id from dolar where fecha like '0" + dia + "/0"+ mes +"/2020';");
 
         }
         else {
-            results = await pool.query("select concat(substr(fecha,7,4),'/',substr(fecha,4,2),'/',substr(fecha,1,2),' ',hora) as fecha_hora, centro,usr,round(dlls,2) as dlls,round(venta,2) as venta, concat(centro,'0',caja,ticket,id_fpt,concat(substr(fecha,7,4),substr(fecha,4,2),substr(fecha,1,2))) as id from dolar where fecha like '" + dia + "/05/2020';");
+            results = await pool.query("select concat(substr(fecha,7,4),'/',substr(fecha,4,2),'/',substr(fecha,1,2),' ',hora) as fecha_hora, centro,usr,round(dlls,2) as dlls,round(venta,2) as venta, concat(centro,'0',caja,ticket,id_fpt,concat(substr(fecha,7,4),substr(fecha,4,2),substr(fecha,1,2))) as id from dolar where fecha like '" + dia + "/0"+ mes +"/2020';");
         }
 
         if (results.length !== 0) {
@@ -33,7 +36,7 @@ file.genTXT = async function () {
             header = `HDR|T6AH4ADX|N23BZQ3O|${count}|${Number(total).toFixed(2)}|0\n`;
             content = header + body;
 
-            fs.writeFile(`./txt/${moment(Date.now()).format('YYYYMMD')}_${dia}.txt`, content, (err) => {
+            fs.writeFile(`./txt/${moment(Date.now()).format('YYYYMMDD')}_${dia}.txt`, content, (err) => {
                 if (err) {
                     return console.log(err);
                 }

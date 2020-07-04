@@ -3,6 +3,7 @@ const morgan =require('morgan')
 const exphbs = require('express-handlebars')
 const path = require('path')
 const cors = require('cors')
+const fileUpload = require("express-fileupload")
 
 //initialization
 const app = express()
@@ -24,6 +25,7 @@ app.use(morgan('dev'))
 app.use(express.urlencoded({extended: false}))
 app.use(express.json())
 app.use(cors())
+app.use(fileUpload())
 
 //global variables
 app.use((req, res, next) => {

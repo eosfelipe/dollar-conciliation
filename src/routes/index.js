@@ -5,9 +5,11 @@ const pool = require('../database');
 const file = require('../lib/functions');
 const axios = require('axios');
 const fs = require('fs');
-const moment =require('moment');
+const moment = require('moment');
+const path = require('path');
+const { nextTick } = require('process');
 
-// console.log(pool);
+let message = {};
 
 router.get('/', async (req, res) => {
     // const procedure = await pool.query("call create_tmptables();");
@@ -45,8 +47,47 @@ router.post('/generar', async (req, res) => {
     }
 });
 
-router.get('/canfac', async (req, res) => {
-    res.render('fac/cancel');
+// router.get('/canfac', async (req, res) => {
+//     res.render('fac/cancel');
+// });
+
+router.get('/json', async (req, res) => {
+    const fullPath = path.join(process.cwd(), '/can_json');
+    const dir = fs.opendirSync(fullPath);
+    let entity;
+    let listing = [];
+    while ((entity = dir.readSync()) !== null) {
+        if (entity.isFile()) {
+            listing.push({ type: 'f', name: entity.name });
+        } else if (entity.isDirectory()) {
+            listing.push({ type: 'd', name: entity.name });
+        }
+    }
+    dir.closeSync();
+
+    // res.send(listing);
+    // console.log(listing)
+    message.files = listing;
+    res.render('fac/invoice', { message });
+});
+
+router.get('/download/:name', (req, res, next) => {
+    const fileName = req.params.name;
+    const options = {
+        root: path.join(process.cwd(), '/can_json'),
+        dotfiles: 'deny',
+        headers: {
+            'x-timestamp': Date.now(),
+            'x-sent': true
+        }
+    }
+    res.download(path.join(process.cwd(), `/can_json/${fileName}`), (err) => {
+        if (err) {
+            next(err);
+        } else {
+            console.log('Sent: ', fileName);
+        }
+    });
 });
 
 router.post('/canfac', async (req, res) => {
@@ -54,10 +95,9 @@ router.post('/canfac', async (req, res) => {
     const { cc, folio } = req.body;
     const response = await axios.get(END_POINT + cc);
     const sucursal = response.data.sucursal;
-    let render = null;
 
-    const content = 
-    { 
+    const content =
+    {
         folio: folio,
         serie: sucursal.prefijo,
         rfc_emisor: "PPA831231GI0",
@@ -72,9 +112,26 @@ router.post('/canfac', async (req, res) => {
         }
         console.log('Successfully generated file .CAN');
     });
-    render = {...content, ok: true};
+    message = { ...content, ok: true, msg: `Successfully generated file .CAN Folio: ${content.folio}` };
     // res.status(200).send('res');
-    res.render('fac/cancel', { render });
+    // res.download(`./can_json/CAN${cc}${sucursal.prefijo}${folio}.json`)
+    res.redirect('/json');
+});
+
+router.post('/upload', (req, res) => {
+    let msg = null;
+    if (!req.files || Object.keys(req.files).length === 0) {
+        return res.status(400).send('No files were uploaded');
+    }
+
+    let jf = req.files.jsonFile;
+
+    jf.mv(`./fac_json/${jf.name}`, (err) => {
+        if (err) return res.status(500).send(err);
+
+        message = { ok: true, msg: `Successfully uploaded file ${jf.name}` };
+        res.redirect('/json');
+    });
 });
 
 module.exports = router;

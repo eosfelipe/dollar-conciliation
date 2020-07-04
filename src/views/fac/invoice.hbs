@@ -1,0 +1,90 @@
+<div class="row p-3 my-3">
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a id="tab1" class="nav-link active" data-toggle="tab" href="#json1">Generar cancelación JSON</a>
+        </li>
+        {{!-- <li class="nav-item">
+            <a id="tab2" class="nav-link" data-toggle="tab" href="#json2">Editar JSON</a>
+        </li> --}}
+        <li class="nav-item">
+            <a id="tab3" class="nav-link" data-toggle="tab" href="#json3">Lista de archivos</a>
+        </li>
+    </ul>
+    <div id="myTabContent" class="tab-content my-3">
+        <div class="tab-pane fade active show" id="json1">
+            <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Expedita repellendus voluptatem ab, esse eum at
+                assumenda voluptas sed perferendis corrupti perspiciatis autem asperiores ipsum nostrum labore
+                reprehenderit optio non sapiente?</p>
+            {{#if message.ok}}
+            <div class="alert alert-dismissible alert-success">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <strong>{{ message.msg }}</strong>
+            </div>
+            {{/if}}
+            <div class="col-md-6">
+                <form action="/canfac" method="POST">
+                    <div class="form-group">
+                        <label for="cc">Número de centro:</label>
+                        <input type="text" class="form-control" name="cc" placeholder="ejem. 1037" autocomplete="off"
+                            maxlength="4" autofocus required>
+                    </div>
+                    <div class="form-group">
+                        <label for="texto">Folio:</label>
+                        <input type="texto" class="form-control" name="folio" placeholder="XXXX" autocomplete="off"
+                            required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Generar</button>
+                </form>
+            </div>
+
+        </div>
+        <div class="tab-pane fade" id="json2">
+            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ab quis sed voluptatem facilis iure ullam, esse
+                magnam, eos voluptate porro nulla quia perferendis itaque modi libero, autem laborum a obcaecati?</p>
+            <div class="col-md-6">
+                <form id="uploadForm" action="/upload" method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="carga-json">Seleccionar archivo json</label>
+                        <input type="file" class="form-control-file" name="jsonFile" placeholder="Seleccionar archivi">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Aceptar</button>
+                </form>
+            </div>
+
+        </div>
+        <div class="tab-pane fade" id="json3">
+            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Temporibus, obcaecati officia, placeat
+                accusantium earum ex asperiores recusandae odio ratione praesentium inventore! Aliquam dolore aut fugit
+                delectus iusto, numquam consectetur saepe?</p>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Archivo</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each message.files}}
+                    <tr>
+                        <td>{{name}}</td>
+                        <td><a href="/download/{{name}}">Download</a></td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    const btn = document.querySelectorAll('.close');
+    if (btn) {
+        const alert = document.querySelectorAll('.alert');
+        setTimeout(() => {
+            alert.forEach(i => {
+                i.style.display = 'none';
+            })
+        }, 4000);
+    }
+
+</script>
